@@ -1,0 +1,28 @@
+{
+  "color": [
+    {
+      "name": "start_window_background",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "current_color",
+      "value": "#3388ff"
+    },
+    {
+      "name": "text_color",
+      "value": "#E6000000"
+    },
+    {
+      "name": "tab_color",
+      "value": "#F3F4F5"
+    },
+    {
+      "name": "font_primary",
+      "value": "#1A171B"
+    },
+    {
+      "name": "font_secondary",
+      "value": "#8E8E8E"
+    }
+  ]
+}

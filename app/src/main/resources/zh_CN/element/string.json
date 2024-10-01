@@ -1,0 +1,52 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "开源车联网"
+    },
+    {
+      "name": "module_desc",
+      "value": "模块描述"
+    },
+    {
+      "name": "AppAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "AppAbility_label",
+      "value": "开源车联网"
+    },
+    {
+      "name": "explore",
+      "value": "探索"
+    },
+    {
+      "name": "service",
+      "value": "服务"
+    },
+    {
+      "name": "vehicle",
+      "value": "爱车"
+    },
+    {
+      "name": "mall",
+      "value": "商城"
+    },
+    {
+      "name": "my",
+      "value": "我的"
+    },
+    {
+      "name": "setting",
+      "value": "设置"
+    },
+    {
+      "name": "title",
+      "value": "标题"
+    },
+    {
+      "name": "version",
+      "value": "版本"
+    }
+  ]
+}

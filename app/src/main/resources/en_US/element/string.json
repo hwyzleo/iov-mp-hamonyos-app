@@ -1,0 +1,52 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "open iov"
+    },
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "AppAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "AppAbility_label",
+      "value": "open iov"
+    },
+    {
+      "name": "explore",
+      "value": "Explore"
+    },
+    {
+      "name": "service",
+      "value": "Service"
+    },
+    {
+      "name": "vehicle",
+      "value": "Vehicle"
+    },
+    {
+      "name": "mall",
+      "value": "Mall"
+    },
+    {
+      "name": "my",
+      "value": "My"
+    },
+    {
+      "name": "setting",
+      "value": "setting"
+    },
+    {
+      "name": "title",
+      "value": "title"
+    },
+    {
+      "name": "version",
+      "value": "version"
+    }
+  ]
+}
