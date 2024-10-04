@@ -47,6 +47,62 @@
     {
       "name": "version",
       "value": "版本"
+    },
+    {
+      "name": "input_mobile",
+      "value": "请输入手机号"
+    },
+    {
+      "name": "login_register",
+      "value": "登录 / 注册"
+    },
+    {
+      "name": "login_confirm_tip",
+      "value": "我已阅读并同意《用户协议》《隐私政策》，用户首次登录将会同步注册APP账号"
+    },
+    {
+      "name": "get_verify_code",
+      "value": "获取验证码"
+    },
+    {
+      "name": "tip",
+      "value": "提示"
+    },
+    {
+      "name": "agree_user_agreement",
+      "value": "请勾选同意用户协议"
+    },
+    {
+      "name": "cancel",
+      "value": "取消"
+    },
+    {
+      "name": "confirm",
+      "value": "确认"
+    },
+    {
+      "name": "input_verify_code",
+      "value": "请输入验证码"
+    },
+    {
+      "name": "not_login_welcome",
+      "value": "Hi，\n欢迎您的到来"
+    },
+    {
+      "name": "verify_code_has_sent",
+      "value": "验证码已发送至您的手机："
+    },
+    {
+      "name": "sign_in",
+      "value": "签到"
+    },
+    {
+      "name": "logout",
+      "value": "退出登录"
+    },
+    {
+      "name": "confirm_action",
+      "value": "你确定要执行这个操作"
     }
   ]
 }

@@ -1,9 +1,12 @@
 import router from '@ohos.router';
 
-@Entry
+/**
+ * 我的页面 - 未登录
+ *
+ * @author hwyz_leo
+ */
 @Component
-export struct MyView {
-
+export struct MyPageNotLogin {
   build() {
     Column() {
       Row() {
@@ -14,26 +17,42 @@ export struct MyView {
           .width(30)
           .onClick(() => {
             router.pushUrl({
-              url: 'module/my/view/SettingView',
+              url: 'module/my/page/SettingPage',
             })
           })
       }
+
       Blank().height(20)
       Row() {
-        Text("Hi,\n欢迎您的到来").fontSize(20)
+        Text($r("app.string.not_login_welcome")).fontSize(20)
         Blank().layoutWeight(1)
         Image($r("app.media.my_place_holder")).width(80)
       }
+
       Blank().height(40)
-      Button("登录 / 注册")
+      Button($r("app.string.login_register"))
         .width('100%')
         .backgroundColor(Color.White)
         .foregroundColor(Color.Black)
         .borderColor(Color.Black)
         .borderWidth(1)
+        .onClick(() => {
+          router.pushUrl({
+            url: 'module/login/LoginMobileStep1Page',
+          })
+        })
       Blank()
     }
     .padding({ left: 20, right: 20 })
   }
+}
 
+@Entry
+@Component
+struct MyPageNotLoginPreview {
+  build() {
+    Column() {
+      MyPageNotLogin()
+    }
+  }
 }

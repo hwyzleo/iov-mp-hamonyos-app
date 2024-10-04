@@ -1,10 +1,30 @@
 import { AbilityConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
+import distributedKVStore from '@ohos.data.distributedKVStore';
+import { BusinessError } from '@kit.BasicServicesKit';
+import { UserManager } from '../utils/UserManager';
+
+let kvManager: distributedKVStore.KVManager;
 
 export default class AppAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onCreate');
+    let context = this.context
+    const kvManagerConfig: distributedKVStore.KVManagerConfig = {
+      context: context,
+      bundleName: 'net.hwyz.iov.mp.app',
+    }
+    try {
+      kvManager = distributedKVStore.createKVManager(kvManagerConfig);
+      console.info("Succeeded in creating KVManager");
+    } catch (e) {
+      let error = e as BusinessError;
+      console.error(`Failed to create KVManager.code is ${error.code},message is ${error.message}`);
+    }
+    if (kvManager !== undefined) {
+      UserManager.init(kvManager);
+    }
   }
 
   onDestroy(): void {

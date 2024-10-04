@@ -1,6 +1,6 @@
 import { Constants } from './common/Constants';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import { MyView } from './module/my/view/MyView'
+import { MyPage } from './module/my/page/MyPage';
 
 @Entry
 @Component
@@ -34,7 +34,7 @@ struct Index {
     TabContent() {
       Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.Start }) {
         if (index == Constants.TAB_INDEX_FOUR) {
-          MyView()
+          MyPage()
         } else {
           Row() {
             Text(index.toString())

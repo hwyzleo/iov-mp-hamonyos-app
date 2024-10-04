@@ -1,6 +1,9 @@
 {
   "src": [
     "Index",
-    "module/my/view/SettingView"
+    "module/my/page/MyPage",
+    "module/my/page/SettingPage",
+    "module/login/LoginMobileStep1Page",
+    "module/login/LoginMobileStep2Page"
   ]
 }

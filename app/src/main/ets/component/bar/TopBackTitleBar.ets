@@ -1,4 +1,3 @@
-@Entry
 @Component
 export struct TopBackTitleBar {
   @Prop title: string = ""
@@ -25,6 +24,16 @@ export struct TopBackTitleBar {
           .onClick(() => this.onBackClick())
         Blank().layoutWeight(1)
       }
+    }
+  }
+}
+
+@Entry
+@Component
+struct TopBackTitleBarPreview {
+  build() {
+    Column() {
+      TopBackTitleBar()
     }
   }
 }
