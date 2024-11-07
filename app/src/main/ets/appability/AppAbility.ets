@@ -4,6 +4,7 @@ import { window } from '@kit.ArkUI';
 import distributedKVStore from '@ohos.data.distributedKVStore';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { UserManager } from '../utils/UserManager';
+import { SecurityManager } from '../utils/SecurityManager';
 
 let kvManager: distributedKVStore.KVManager;
 
@@ -25,6 +26,7 @@ export default class AppAbility extends UIAbility {
     if (kvManager !== undefined) {
       UserManager.init(kvManager);
     }
+    SecurityManager.init()
   }
 
   onDestroy(): void {
