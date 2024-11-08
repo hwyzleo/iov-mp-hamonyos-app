@@ -1,4 +1,5 @@
 import router from '@ohos.router';
+import { SecurityManager } from '../../../utils/SecurityManager';
 import { UserManager } from '../../../utils/UserManager';
 
 /**
@@ -10,6 +11,7 @@ import { UserManager } from '../../../utils/UserManager';
 export struct MyPageLogin {
   @State nickname: string = "nickname"
   @State avatar: string = ""
+  @State csr: string = ""
 
   aboutToAppear(): void {
     const params = router.getParams() as Record<string, string>;
@@ -46,24 +48,35 @@ export struct MyPageLogin {
         Blank().layoutWeight(1)
         Image(this.avatar).width(80)
       }
-
-      Blank().height(40)
       Row() {
-        Button($r("app.string.sign_in"))
-          .width(80)
-          .backgroundColor(Color.White)
-          .foregroundColor(Color.Black)
-          .borderColor(Color.Black)
-          .borderWidth(1)
-          .onClick(() => {
-            router.pushUrl({
-              url: 'module/login/LoginMobileStep1Page',
-            })
-          })
-        Blank().layoutWeight(1)
+        TextInput({ text: this.csr })
       }
+      Scroll() {
+        Column() {
+          Blank().height(40)
+          Row() {
+            Button($r("app.string.sign_in"))
+              .width(80)
+              .backgroundColor(Color.White)
+              .foregroundColor(Color.Black)
+              .borderColor(Color.Black)
+              .borderWidth(1)
+              .onClick(() => {
+                let csr = SecurityManager.shared.createCsr()
+                if(csr != null) {
+                  this.csr = csr
+                  console.info(csr)
+                }
+                // router.pushUrl({
+                //   url: 'module/login/LoginMobileStep1Page',
+                // })
+              })
+            Blank().layoutWeight(1)
+          }
 
-      Blank()
+          Blank()
+        }
+      }
     }
     .padding({ left: 20, right: 20 })
   }

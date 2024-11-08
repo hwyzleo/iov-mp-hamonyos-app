@@ -25,45 +25,46 @@ export class SecurityManager {
    * @returns
    */
   createCsr(): string | null {
-    let keyPair = this.loadKeyPair("default");
+    let key = "1596067469523820544-6FE4BCE901F74B2AA392E6E41FE7679E";
+    let keyPair = this.loadKeyPair(key);
     if (keyPair == null) {
       return null
     }
     let publicKey = keyPair.pubKey
     // 构建主题信息
     const subject: SubjectInfo[] = [
-      { key: 'CN', value: "commonName" },
-      { key: 'O', value: "organization" },
-      { key: 'OU', value: "organizationalUnit" },
-      { key: 'L', value: "locality" },
-      { key: 'ST', value: "state" },
-      { key: 'C', value: "country" }
+      { key: 'CN', value: key },
+      { key: 'O', value: "O" },
+      { key: 'OU', value: "OU" },
+      { key: 'L', value: "L" },
+      { key: 'ST', value: "ST" },
+      { key: 'C', value: "CN" }
     ];
     // 构建CSR主体
-    const csrBody: CSRBody = {
-      version: 0,
+    const certificationRequestInfo: CertificationRequestInfo = {
+      version: 1,
       subject: subject,
-      subjectPublicKeyInfo: {
+      subjectPKInfo: {
         algorithm: 'RSA',
         subjectPublicKey: publicKey.getEncoded().data
       },
       attributes: []
     };
     // 将CSR主体序列化为DER格式
-    const csrBodyDer = this.encodeCSRBody(csrBody);
+    const certificationRequestInfoDer = this.encodeCSRBody(certificationRequestInfo);
     // 使用私钥对CSR主体进行签名
-    const signature = this.signatureUint8(csrBodyDer, "default");
+    const signature = this.signatureUint8(certificationRequestInfoDer, key);
     if (signature == null) {
       return null;
     }
     // 构建完整的CSR
-    const csr: CSR = {
-      csrBody: csrBody,
+    const csr: CertificationRequest = {
+      certificationRequestInfo: certificationRequestInfo,
       signatureAlgorithm: 'SHA256withRSA',
       signature: signature
     };
     // 将CSR转换为PEM格式
-    let csrDer = this.encodeCSR(csr);
+    let csrDer = this.encodeCertificationRequest(csr);
     const csrPem = this.derToPem(csrDer, 'CERTIFICATE REQUEST');
     return csrPem;
   }
@@ -86,14 +87,14 @@ export class SecurityManager {
    * @param csrBody
    * @returns
    */
-  private encodeCSRBody(csrBody: CSRBody): Uint8Array {
+  private encodeCSRBody(certificationRequestInfo: CertificationRequestInfo): Uint8Array {
     const encoder = new DerEncoder();
     encoder.encodeSequence(() => {
       // Version
-      encoder.encodeInteger(csrBody.version);
+      encoder.encodeInteger(certificationRequestInfo.version);
       // Subject
       encoder.encodeSequence(() => {
-        for (const item of csrBody.subject) {
+        for (const item of certificationRequestInfo.subject) {
           encoder.encodeSet(() => {
             encoder.encodeSequence(() => {
               encoder.encodeOID(item.key);
@@ -105,15 +106,15 @@ export class SecurityManager {
       // SubjectPublicKeyInfo
       encoder.encodeSequence(() => {
         encoder.encodeSequence(() => {
-          encoder.encodeOID(this.getOIDForAlgorithm(csrBody.subjectPublicKeyInfo.algorithm));
+          encoder.encodeOID(this.getOIDForAlgorithm(certificationRequestInfo.subjectPKInfo.algorithm));
           encoder.encodeNull();
         });
-        encoder.encodeBitString(csrBody.subjectPublicKeyInfo.subjectPublicKey);
+        encoder.encodeBitString(certificationRequestInfo.subjectPKInfo.subjectPublicKey);
       });
       // Attributes (if any)
-      if (csrBody.attributes.length > 0) {
+      if (certificationRequestInfo.attributes.length > 0) {
         encoder.encodeSequence(() => {
-          for (const attr of csrBody.attributes) {
+          for (const attr of certificationRequestInfo.attributes) {
             encoder.encodeSequence(() => {
               encoder.encodeOID(attr.type);
               encoder.encodeSet(() => {
@@ -135,21 +136,20 @@ export class SecurityManager {
 
   /**
    * 对CSR编码
-   * @param csr
+   * @param certificationRequest
    * @returns
    */
-  private encodeCSR(csr: CSR): Uint8Array {
+  private encodeCertificationRequest(certificationRequest: CertificationRequest): Uint8Array {
     const encoder = new DerEncoder();
 
     encoder.encodeSequence(() => {
       // CSR Info (CertificationRequestInfo)
       encoder.encodeSequence(() => {
         // Version
-        encoder.encodeInteger(csr.csrBody.version);
-
+        encoder.encodeInteger(certificationRequest.certificationRequestInfo.version);
         // Subject
         encoder.encodeSequence(() => {
-          for (const item of csr.csrBody.subject) {
+          for (const item of certificationRequest.certificationRequestInfo.subject) {
             encoder.encodeSet(() => {
               encoder.encodeSequence(() => {
                 encoder.encodeOID(item.key);
@@ -162,16 +162,16 @@ export class SecurityManager {
         // SubjectPublicKeyInfo
         encoder.encodeSequence(() => {
           encoder.encodeSequence(() => {
-            encoder.encodeOID(this.getOIDForAlgorithm(csr.csrBody.subjectPublicKeyInfo.algorithm));
+            encoder.encodeOID(this.getOIDForAlgorithm(certificationRequest.certificationRequestInfo.subjectPKInfo.algorithm));
             encoder.encodeNull();
           });
-          encoder.encodeBitString(csr.csrBody.subjectPublicKeyInfo.subjectPublicKey);
+          encoder.encodeBitString(certificationRequest.certificationRequestInfo.subjectPKInfo.subjectPublicKey);
         });
 
         // Attributes (if any)
-        if (csr.csrBody.attributes.length > 0) {
+        if (certificationRequest.certificationRequestInfo.attributes.length > 0) {
           encoder.encodeSequence(() => {
-            for (const attr of csr.csrBody.attributes) {
+            for (const attr of certificationRequest.certificationRequestInfo.attributes) {
               encoder.encodeSequence(() => {
                 encoder.encodeOID(attr.type);
                 encoder.encodeSet(() => {
@@ -190,12 +190,12 @@ export class SecurityManager {
 
       // Signature Algorithm
       encoder.encodeSequence(() => {
-        encoder.encodeOID(this.getOIDForAlgorithm(csr.signatureAlgorithm));
+        encoder.encodeOID(this.getOIDForAlgorithm(certificationRequest.signatureAlgorithm));
         encoder.encodeNull();
       });
 
       // Signature
-      encoder.encodeBitString(csr.signature);
+      encoder.encodeBitString(certificationRequest.signature);
     });
 
     return encoder.getEncoded();
@@ -211,12 +211,11 @@ export class SecurityManager {
 
   /**
    * 生成公私钥对
-   * @param key
    * @returns
    */
-  private generateRSA2048KeyPair(key: string): cryptoFramework.KeyPair | null {
+  private generateRSA2048KeyPair(): cryptoFramework.KeyPair | null {
     try {
-      let asyKeyGenerator = cryptoFramework.createAsyKeyGenerator("RSA1024");
+      let asyKeyGenerator = cryptoFramework.createAsyKeyGenerator("RSA2048");
       let keyPair = asyKeyGenerator.generateKeyPairSync();
       console.log("Asymmetric key generator created successfully");
       return keyPair;
@@ -263,8 +262,14 @@ export class SecurityManager {
     }
     try {
       let attributes: asset.AssetMap = new Map();
-      attributes.set(asset.Tag.ALIAS, this.stringToUint8Array(priKey));
-      attributes.set(asset.Tag.SECRET, keyPair.priKey.getEncoded().data);
+      attributes.set(asset.Tag.ALIAS, this.stringToUint8Array(priKey + "-0"));
+      let priSecret0 = new Uint8Array(keyPair.priKey.getEncoded().data.buffer, 0, 1024)
+      attributes.set(asset.Tag.SECRET, priSecret0);
+      asset.addSync(attributes);
+      attributes.set(asset.Tag.ALIAS, this.stringToUint8Array(priKey + "-1"));
+      let priSecret1 =
+        new Uint8Array(keyPair.priKey.getEncoded().data.buffer, 1024, keyPair.priKey.getEncoded().data.length - 1024)
+      attributes.set(asset.Tag.SECRET, priSecret1);
       asset.addSync(attributes);
     } catch (error) {
       console.error('Failed to save private key:', error);
@@ -284,12 +289,18 @@ export class SecurityManager {
       query.set(asset.Tag.ALIAS, this.stringToUint8Array(pubKey));
       query.set(asset.Tag.RETURN_TYPE, asset.ReturnType.ALL);
       let pubResult = asset.querySync(query)
-      query.set(asset.Tag.ALIAS, this.stringToUint8Array(priKey));
-      let priResult = asset.querySync(query)
-      if (pubResult.length > 0 && priResult.length > 0) {
+      query.set(asset.Tag.ALIAS, this.stringToUint8Array(priKey + "-0"));
+      let pri0Result = asset.querySync(query)
+      query.set(asset.Tag.ALIAS, this.stringToUint8Array(priKey + "-1"));
+      let pri1Result = asset.querySync(query)
+      if (pubResult.length > 0 && pri0Result.length > 0 && pri1Result.length > 0) {
         let pubSecret = pubResult[0].get(asset.Tag.SECRET) as Uint8Array
-        let priSecret = priResult[0].get(asset.Tag.SECRET) as Uint8Array
-        let asyKeyGenerator = cryptoFramework.createAsyKeyGenerator("RSA1024");
+        let pri0Secret = pri0Result[0].get(asset.Tag.SECRET) as Uint8Array
+        let pri1Secret = pri1Result[0].get(asset.Tag.SECRET) as Uint8Array
+        let priSecret = new Uint8Array(pri0Secret.length + pri1Secret.length);
+        priSecret.set(new Uint8Array(pri0Secret), 0);
+        priSecret.set(new Uint8Array(pri1Secret), pri0Secret.length);
+        let asyKeyGenerator = cryptoFramework.createAsyKeyGenerator("RSA2048");
         let pkBlob: cryptoFramework.DataBlob = { data: pubSecret };
         let skBlob: cryptoFramework.DataBlob = { data: priSecret };
         let keyPair = asyKeyGenerator.convertKeySync(pkBlob, skBlob)
@@ -299,7 +310,7 @@ export class SecurityManager {
       }
     } catch (error) {
       if (error.code == 24000002) {
-        let keyPair = this.generateRSA2048KeyPair(key);
+        let keyPair = this.generateRSA2048KeyPair();
         if (keyPair != null) {
           this.storeKeyPair(keyPair, key);
           return keyPair
@@ -332,7 +343,7 @@ export class SecurityManager {
   private signatureUint8(data: Uint8Array, key: string): Uint8Array | null {
     try {
       let dataArray: cryptoFramework.DataBlob = { data: data };
-      const signer = cryptoFramework.createSign("RSA1024|PKCS1|SHA256");
+      const signer = cryptoFramework.createSign("RSA2048|PKCS1|SHA256");
       let keyPair = this.loadKeyPair(key)
       if (keyPair == null) {
         return null
@@ -378,7 +389,7 @@ interface SubjectInfo {
 /**
  * 主题公钥信息
  */
-interface SubjectPublicKeyInfo {
+interface SubjectPKInfo {
   algorithm: string;
   subjectPublicKey: Uint8Array;
 }
@@ -394,18 +405,18 @@ interface Attribute {
 /**
  * CSR主体
  */
-interface CSRBody {
+interface CertificationRequestInfo {
   version: number;
   subject: SubjectInfo[];
-  subjectPublicKeyInfo: SubjectPublicKeyInfo;
+  subjectPKInfo: SubjectPKInfo;
   attributes: Attribute[];
 }
 
 /**
  * CSR
  */
-interface CSR {
-  csrBody: CSRBody;
+interface CertificationRequest {
+  certificationRequestInfo: CertificationRequestInfo;
   signatureAlgorithm: string;
   signature: Uint8Array;
 }
